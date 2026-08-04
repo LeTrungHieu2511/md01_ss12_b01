@@ -1,16 +1,14 @@
 --1
 create table customers(
 	customer_id serial primary key,
-	customer_name varchar(100),
-	email varchar(100)
+	name varchar(50),
+	email varchar(50)
 );
 --2
 create table customer_log(
 	log_id serial primary key,
-	customer_id int,
 	customer_name varchar(100),
-	action varchar(20),
-	log_time timestamp default now()
+	action_time timestamp,
 );
 --3
 create or replace function log_customer_insert()
@@ -18,8 +16,8 @@ returns trigger
 as
 $$
 begin
-	insert into customer_log(customer_id, customer_name, action)
-	values(new.customer_id, new.customer_name, 'insert');
+	insert into customer_log(customer_name, action_time)
+	values(new.name, now());
 
 	return new;
 end;
@@ -32,11 +30,11 @@ on customers
 for each row
 execute function log_customer_insert();
 --4
-insert into customers(customer_name, email)
+insert into customers(name, email)
 values
-('Nguyen Van A', 'a@gmail.com'),
-('Tran Thhi B', 'b@gmail.com'),
-('Le Van C', 'c@gmail.com');
+('nguyen van a', 'a@gmail.com'),
+('tran thi b', 'b@gmail.com'),
+('le van c', 'c@gmail.com');
 
 select * from customers;
 
